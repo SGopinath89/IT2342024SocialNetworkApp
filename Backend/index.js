@@ -9,6 +9,8 @@ const authRoute = require("./routes/auth")
 const postRoute = require("./routes/posts")
 const courseRoute = require("./routes/courses")
 const videoRoute=require("./routes/videos");
+const groupRoute=require("./routes/groups");
+
 
 dotenv.config();
 
@@ -25,6 +27,7 @@ app.use("/api/auth" , authRoute);
 app.use("/api/posts" , postRoute);
 app.use("/api/courses" , courseRoute);
 app.use("/api/videos", videoRoute);
+app.use("/api/groups", groupRoute);
 
 app.listen(8800,()=>{
     console.log("Backend server is running");
