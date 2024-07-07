@@ -1,1 +1,55 @@
 
+body{
+    background:linear-gradient(180deg, #43255c, #292030);
+}
+.socialconnect{
+    margin: 0;
+    font-size: 30px;
+    font-weight: 400;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    z-index: 1;
+    color:#ffffff;
+    margin-top: 20px;
+    margin-left:40px;
+}
+
+.img1{
+    height:80px;
+    width:80px;
+    margin-left: 190px;
+    margin-top: -60px;
+
+}
+
+.log{
+    font-weight: 1000;
+    text-align: center;
+    min-width: 150px;
+    min-height: 30px;
+    background-color: #fefdfe;
+    border-radius: 20px;
+    margin-top: 10px;
+    margin-left: 120px;
+    color:#43255c;
+    
+}
+
+.login{
+    margin-top: 100px;
+}
+.bgimage{
+    height: 550px;
+    width: 800px;
+    margin-left: 450px;
+    margin-top: -380px;
+}
+label{
+    color:#ffffff;
+    font-size: 15px;
+    margin-left: 40px;
+}
+input{
+    margin-left: 40px;
+    font-size: 15px;
+    width:350px;
+}
