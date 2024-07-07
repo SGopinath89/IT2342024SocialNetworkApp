@@ -1,1 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialConnectVideo</title>
+    <link rel="stylesheet" href="videocss.css">
+    <style>
+        /* Your existing CSS styles */
+        .menu {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .menu-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .menu-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .menu:hover .menu-content {
+            display: block;
+        }
+        .video-post {
+            position: relative;
+            padding: 15px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+        .video-options {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .three-dots {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .bookmark-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+        }
+        .bookmark-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>SocialConnect</h1>
+            <ul>
+                <li><a href="index.html">Feed</a></li>
+                <li><a href="video.html">Videos</a></li>
+               
+                <li><a href="bookmarks.html">Bookmarks</a></li>
+                <li><a href="job.html">Jobs</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="groups.html">Groups</a></li>
+                <li><a href="courses.html">Courses</a></li>
+            </ul>
+            <div class="profile">
+                <img src="images/profile.png" alt="Profile Picture">
+                <a href="profile.html" class="profilename"><span id="profileName">Profile Name</span></a>
+            </div>
+        </div>
+        <div class="profile-section">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <a href="upload.html"><button type="submit">Upload video</button></a><br>
+            <div id="video-feed">
+                <!-- Video posts will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.username) {
+        document.getElementById('profileName').textContent = user.username;
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    const videoFeed = document.getElementById('video-feed');
+    let allVideos = []; // Array to store all videos initially
+
+    searchInput.addEventListener('input', (event) => {
+        const query = event.target.value.trim().toLowerCase(); // Trim whitespace and convert to lowercase
+
+        const filteredVideos = allVideos.filter(video =>
+            video.title.toLowerCase().includes(query)
+        );
+        renderVideos(filteredVideos);
+    });
+
+    async function fetchVideos() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token not available');
+        }
+
+        const response = await fetch('/api/videos', {
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch videos');
+        }
+
+        const videos = await response.json();
+        console.log('Fetched videos:', videos); // Log the fetched videos
+        allVideos = videos; // Store all videos in allVideos array
+        renderVideos(allVideos);
+    } catch (error) {
+        console.error('Error fetching videos:', error);
+    }
+}
+
+
+    function renderVideos(videos) {
+        videoFeed.innerHTML = ''; // Clear the video feed before adding new videos
+
+        if (videos.length === 0) {
+            videoFeed.innerHTML = '<p>No videos found</p>';
+            return;
+        }
+
+        videos.forEach(video => {
+            const videoElement = document.createElement('div');
+            videoElement.classList.add('video-post');
+
+            const videoPlayer = document.createElement('video');
+            videoPlayer.src = `/uploads/${video.filename}`;
+            videoPlayer.controls = true;
+
+            const title = document.createElement('h5');
+            title.textContent = video.title;
+
+            const description = document.createElement('p');
+            description.textContent = video.description;
+
+            const user = document.createElement('p');
+            user.textContent = `Uploaded by: ${video.user.username}`;
+
+            const uploadDate = document.createElement('p');
+            uploadDate.textContent = `Uploaded on: ${new Date(video.uploadDate).toLocaleString()}`;
+
+            const likeButton = document.createElement('button');
+            likeButton.textContent = `Like (${video.likes || 0})`;
+            likeButton.addEventListener('click', async () => {
+                try {
+                    const likeResponse = await fetch(`/api/videos/${video._id}/like`, { method: 'POST' });
+                    if (!likeResponse.ok) {
+                        throw new Error('Failed to like video');
+                    }
+                    const likeData = await likeResponse.json();
+                    likeButton.textContent = `Like (${likeData.likes})`;
+                } catch (error) {
+                    console.error('Error liking video:', error);
+                }
+            });
+
+            const commentButton = document.createElement('button');
+            commentButton.textContent = 'Comment';
+            commentButton.addEventListener('click', () => {
+                toggleCommentSection(video._id);
+            });
+
+            const shareButton = document.createElement('button');
+            shareButton.textContent = 'Share';
+            shareButton.addEventListener('click', async () => {
+                try {
+                    const videoId = video._id;
+                    const token = localStorage.getItem('token');
+                    const userId = JSON.parse(localStorage.getItem('user')).userId; // Extract userId from localStorage
+                    const itemModel = 'Video'; // Assuming 'Video' as the item model
+                    const createdAt = new Date().toISOString(); // Current timestamp
+
+                    if (!token) {
+                        throw new Error('User not authenticated');
+                    }
+
+                    const response = await fetch(`/api/videos/${videoId}/share`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ userId, createdAt })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to share video');
+                    }
+
+                    const data = await response.json();
+                    alert('Video shared successfully!');
+                } catch (error) {
+                    console.error('Error sharing video', error);
+                    alert(`Error: ${error.message}`);
+                }
+            });
+
+            const bookmarkButton = document.createElement('button');
+            bookmarkButton.textContent = 'Bookmark';
+            bookmarkButton.addEventListener('click', async () => {
+                try {
+                    const videoId = video._id;
+                    const token = localStorage.getItem('token');
+                    const userId = JSON.parse(localStorage.getItem('user')).userId; // Extract userId from localStorage
+                    const itemModel = 'Video'; // Assuming 'Video' as the item model
+                    const createdAt = new Date().toISOString(); // Current timestamp
+
+                    if (!token) {
+                        throw new Error('User not authenticated');
+                    }
+
+                    const response = await fetch(`/api/videos/${videoId}/add`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ userId, createdAt })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to add video to bookmarks');
+                    }
+
+                    const data = await response.json();
+                    alert('Video added to bookmarks successfully!');
+                } catch (error) {
+                    console.error('Error adding video to bookmarks:', error);
+                    alert(`Error: ${error.message}`);
+                }
+            });
+
+            const menu = document.createElement('div');
+            menu.classList.add('menu');
+            const menuIcon = document.createElement('span');
+            menuIcon.classList.add('three-dots');
+            menuIcon.textContent = '⋮';
+            menuIcon.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevents closing the menu on click
+                const menuContent = menu.querySelector('.menu-content');
+                menuContent.style.display = menuContent.style.display === 'block' ? 'none' : 'block';
+            });
+            menu.appendChild(menuIcon);
+
+            const menuContent = document.createElement('div');
+            menuContent.classList.add('menu-content');
+
+            const updateLink = document.createElement('a');
+            updateLink.href = `update.html?videoId=${video._id}`; // Include videoId in the href
+            updateLink.textContent = 'Update';
+            updateLink.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent default link behavior
+
+                // Store video details in localStorage for use in the update page
+                localStorage.setItem('videoToUpdate', JSON.stringify(video));
+                // Redirect manually to the update.html page
+                window.location.href = updateLink.href;
+            });
+
+            const deleteLink = document.createElement('a');
+            deleteLink.textContent = 'Delete';
+            deleteLink.addEventListener('click', async () => {
+                if (confirm('Are you sure you want to delete this video?')) {
+                    try {
+                        const token = localStorage.getItem('token');
+                        const userId = JSON.parse(localStorage.getItem('user')).userId;
+
+                        if (!token) {
+                            throw new Error('User not authenticated');
+                        }
+
+                        const response = await fetch(`/api/videos/${video._id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+
+                        if (!response.ok) {
+                            const error = await response.json();
+                            throw new Error(error.message || 'Failed to delete video');
+                        }
+
+                        alert('Video deleted successfully');
+                        fetchVideos(); // Refresh video list after deletion
+                    } catch (error) {
+                        console.error('Error deleting video:', error);
+                        alert(`Error: ${error.message}`);
+                    }
+                }
+            });
+
+            menuContent.appendChild(updateLink);
+            menuContent.appendChild(deleteLink);
+            menu.appendChild(menuContent);
+
+            const videoOptions = document.createElement('div');
+            videoOptions.classList.add('video-options');
+            videoOptions.appendChild(menu);
+
+            // Create comment section
+            const commentSection = document.createElement('div');
+                commentSection.id = `comment-section-${video._id}`;
+                commentSection.style.display = 'none';
+
+                const commentInput = document.createElement('input');
+                commentInput.type = 'text';
+                commentInput.placeholder = 'Add a comment...';
+
+                const commentSubmitButton = document.createElement('button');
+                commentSubmitButton.textContent = 'Submit';
+                commentSubmitButton.addEventListener('click', async () => {
+                    try {
+                        const commentText = commentInput.value.trim();
+                        if (!commentText) return;
+
+                        const token = localStorage.getItem('token');
+                        const userId = JSON.parse(localStorage.getItem('user')).userId;
+
+                        if (!token) {
+                            alert('User not authenticated');
+                            return;
+                        }
+
+                        const response = await fetch(`/api/videos/${video._id}/comments`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ text: commentText })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to submit comment');
+                        }
+
+                        const newComment = await response.json();
+                        const commentItem = document.createElement('p');
+                        commentItem.textContent = newComment.text;
+                        commentSection.appendChild(commentItem);
+                        commentInput.value = '';
+                    } catch (error) {
+                        console.error('Error submitting comment:', error);
+                    }
+                });
+
+                commentSection.appendChild(commentInput);
+                commentSection.appendChild(commentSubmitButton);
+
+            // Append elements to video post
+            videoElement.appendChild(videoOptions);
+            videoElement.appendChild(title);
+            videoElement.appendChild(description);
+            videoElement.appendChild(user);
+            videoElement.appendChild(uploadDate);
+            videoElement.appendChild(videoPlayer);
+            videoElement.appendChild(likeButton);
+            videoElement.appendChild(commentButton);
+            videoElement.appendChild(shareButton);
+            videoElement.appendChild(bookmarkButton);
+            videoElement.appendChild(commentSection);
+
+            // Append video post to video feed
+            videoFeed.appendChild(videoElement);
+        });
+    }
+    function toggleCommentSection(videoId) {
+            const commentSection = document.getElementById(`comment-section-${videoId}`);
+            commentSection.style.display = commentSection.style.display === 'none' ? 'block' : 'none';
+        }
+    fetchVideos(); // Fetch all videos initially
+});
+
+    </script>
+</body>
+</html>
 
