@@ -1,1 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialConnectVideo</title>
+    <link rel="stylesheet" href="upload.css">
+</head>
+<body>
+    <form id="updateForm">
+        <h1>Update your video</h1>
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" required><br><br>
+
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
+
+        <label for="video">Replace video:</label><br>
+        <input type="file" id="video" name="video" accept="video/*"><br><br>
+
+        <input type="hidden" id="videoId" name="videoId">
+        <button type="submit">Update</button>
+        <button type="button" onclick="cancelUpdate()">Cancel</button>
+    </form>
+    <p id="message"></p>
+
+    <script src="update.js"></script>
+</body>
+</html>
 
