@@ -1,0 +1,351 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1C1C2B; /* Dark background */
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #252540; /* Sidebar background */
+    padding: 20px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.sidebar h1 {
+    color: #FFFFFF; /* White text */
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #B0B0D5; /* Light grey text */
+    font-size: 18px;
+}
+
+.sidebar ul li a:hover {
+    color: white;
+}
+
+.profile-section {
+    margin-top: 20px;
+}
+
+.profile-section input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    background-color: #3B3B59; /* Search input background */
+    color: white;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.main-content {
+    flex: 1;
+    background-color: #252540; /* Main content background */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.post-input {
+    display: flex;
+    align-items: center;
+    background-color: #33334A; /* Post input background */
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.post-input img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.post-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+    background-color: #444466; /* Post input text background */
+    color: white;
+}
+
+.post-input button {
+    padding: 10px;
+    border: none;
+    background-color: #56567A; /* Button background */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.postDescription{
+    display: flex;
+    align-items: center;
+    background-color: #33334A; /* Post input background */
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 0px;
+    color:white;
+    width:80%;
+    margin-right:5px;
+}
+
+.feed {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.feed .post {
+    background-color: #33334A; /* Post background */
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.post-header img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.post-upload-section {
+    position: relative;
+    /* Add other styles as needed */
+  }
+
+.post-content img {
+    min-width: 350px;
+    max-height: 200px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.post-actions button {
+    padding: 5px 10px;
+    border: none;
+    background-color: #56567A;  /*Button background */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+   
+}
+
+.post-actions button:hover {
+    background-color: #3a3a66; /* Lighter shade on hover */
+}
+
+/* Styles for button when active (clicked) */
+.post-actions button:active {
+    background-color: #3B3B59; /* Even darker shade on click */
+}
+
+.profilename{
+    color: #FFFFFF;
+    text-decoration: none;
+}
+.joinEvent {
+    padding: 10px 20px;
+    border: none;
+    background-color: #37378f; /* Button background */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: relative;
+    display: inline-block;
+   background-color:#484866; /* Lighter shade on hover */
+
+    /*color: black;*/
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    padding: 10px;
+    right: 0; /* Ensure it aligns with the ellipsis button */
+    top: 100%; /* Position it directly below the ellipsis button */
+    width: 100px; /* Adjust width to fit content */
+}
+
+.dropdown-menu button {
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+}
+
+/* CSS for update form */
+.modal-content {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+}
+
+.updateDescription {
+    width: 100%;
+    height: 80px;
+    resize: vertical;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.submitUpdateButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.updateForm button:hover {
+    opacity: 0.8;
+}
+
+.savePost {
+    position: absolute;
+    top: -320px;
+    left: 310px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.saveShare{
+    position: absolute;
+    top: 200px;
+    right: 200px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    width: 50px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+
+}
+
+
+.update-form{
+    margin: 5% auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    gap:10px;
+    background-color: #33334A;
+    margin-bottom: 5px;
+}
+
+.update-form input[type="text"],
+.update-form input[type="file"],
+.update-form textarea {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color:#33334A ;
+    font-size: 14px;
+}
+
+.update-form button{
+    background-color: #28283b;
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0;
+}
+
+.comment-section{
+    margin: 5% auto;
+    width:100%;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    gap:10px;
+    background-color: #33334A;
+    margin-bottom: 5px;
+}
+.update-form textarea {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+}
