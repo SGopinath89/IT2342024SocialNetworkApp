@@ -4,17 +4,13 @@ body {
     color: white;
     margin: 0;
     padding: 0;
-    overflow: hidden;
 }
 
 .container {
     display: flex;
-    max-width: 1700px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    max-height: 100vh;
-    height: 100vh;
-
 }
 
 .sidebar {
@@ -23,7 +19,6 @@ body {
     padding: 20px;
     border-radius: 10px;
     margin-right: 20px;
-    height: 85vh;
 }
 
 .sidebar h1 {
@@ -75,7 +70,6 @@ body {
     width: 40px;
     height: 40px;
     margin-right: 10px;
-
 }
 
 .main-content {
@@ -83,7 +77,6 @@ body {
     background-color: #252540; /* Main content background */
     padding: 20px;
     border-radius: 10px;
-    overflow-y: auto
 }
 
 .profile-header {
@@ -94,11 +87,8 @@ body {
 }
 
 .profile-info {
-    /*display: flex;
-    align-items: center;*/
-    margin-top: 125px;
-    margin-left:200px;
-    
+    display: flex;
+    align-items: center;
 }
 
 .profile-info img {
@@ -239,57 +229,3 @@ body {
     text-decoration: none;
 }
 
-.profile-feed img,video{
-    max-width: 600px;
-    display: block;
-    margin-bottom: 10px;
-}
-.profile-feed{
-    margin-top: 20px;
-    overflow-y: auto;
-    height: calc(100vh - 200px);
-}
-.profile-feed button{
-    background-color: #3c3c5e;
-    height:35px;
-    width:150px;
-    margin-right: 10px;
-    color:aliceblue;
-    font-size: 15px;
-    border-radius: 5px;
-}
-.profile-post{
-    background-color: #33334A; /* Video post background */
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    
-}
-
-.profile-post h3 {
-    margin: 0;
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-.profile-post input{
-    height:28px;
-    width:400px;
-    background-color: #5c5c97;
-    color: #FFFFFF;
-}
-.otherProfileDetails{
-    margin-left: 140px;
-    margin-top: -75px;
-}
-#logout{
-    background-color: #3c3c5e;
-    height:35px;
-    width:150px;
-   
-    color:aliceblue;
-    font-size: 15px;
-    border-radius: 5px;
-    margin-top: -500px;
-}

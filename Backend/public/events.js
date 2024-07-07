@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function () {
     const createEventForm = document.getElementById('createEventForm');
     createEventForm.addEventListener('submit', async function (e) {

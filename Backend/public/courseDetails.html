@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialConnect Course Details</title>
+    <link rel="stylesheet" href="courseDetailscss.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseId = urlParams.get('id');
+            if (courseId) {
+                fetchCourseDetails(courseId);
+            }
+        });
+
+        async function fetchCourseDetails(courseId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/courses/${courseId}`);
+                if (!response.ok) {
+                    throw new Error('Course not found');
+                }
+                const course = await response.json();
+                document.querySelector('.course-details').innerHTML = `
+                    <h2>${course.title}</h2>
+                    <p><b>Course Description:</b> ${course.description}</p>
+                    <p><strong>Instructor:</strong> ${course.instructor}</p>
+                    <p><strong>Duration:</strong> ${course.duration}</p>
+                    <button>Enroll Now</button>
+                `;
+            } catch (error) {
+                console.error('Error fetching course details:', error);
+                document.querySelector('.course-details').innerHTML = '<p>Error fetching course details. Please try again later.</p>';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>SocialConnect</h1>
+            <ul>
+                <li><a href="index.html">Feed</a></li>
+                <li><a href="video.html">Videos</a></li>
+                <li><a href="groups.html">Groups</a></li>
+                <li><a href="bookmarks.html">Bookmarks</a></li>
+                <li><a href="job.html">Jobs</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="courses.html">Courses</a></li>
+            </ul>
+            <div class="profile-section">
+                <input type="text" placeholder="Search...">
+                <div class="profile">
+                    <img src="images/profile.png" alt="Profile Picture">
+                    <a href="profile.html" class="profilename"><span>Profile Name</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="courses-section">
+                <div class="course-details">
+                    <!-- Course details will be populated here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

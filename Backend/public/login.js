@@ -1,11 +1,11 @@
-
+// JavaScript code to handle login form submission
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
-    event.preventDefault(); 
+    event.preventDefault(); // Prevent the form from submitting in the default way
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    console.log('Form submitted with:', { email, password });
+    console.log('Form submitted with:', { email, password }); // Debugging line
 
     try {
         const response = await fetch('/api/auth/login', {
@@ -16,13 +16,14 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
             body: JSON.stringify({ email, password }),
         });
 
-        console.log('Response status:', response.status);
+        console.log('Response status:', response.status); // Debugging line
 
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
-            window.location.href = '/feed.html'; 
+            // Redirect or navigate to another page upon successful login
+            window.location.href = '/feed.html'; // Replace with your redirect URL
         } else {
             const errorData = await response.json();
             console.error('Login error:', errorData);
@@ -33,4 +34,3 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
         alert('An error occurred. Please try again later.');
     }
 });
-

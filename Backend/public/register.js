@@ -9,7 +9,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const confirmPassword = document.getElementById('confirmPassword').value;
 
     try {
-        const response = await fetch('http://localhost:8800/api/auth/register', {
+        const response = await fetch('http://localhost:8804/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -39,4 +39,3 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         alert('Error: ' + error.message);
     }
 });
-

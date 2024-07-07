@@ -1,0 +1,162 @@
+/* Add these styles to profilecss.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1C1C2B; /* Dark background */
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #252540; /* Sidebar background */
+    padding: 20px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.sidebar h1 {
+    color: #FFFFFF; /* White text */
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #B0B0D5; /* Light grey text */
+    font-size: 18px;
+}
+
+.sidebar ul li a:hover {
+    color: white;
+}
+
+.profile-section {
+    margin-top: 20px;
+}
+
+.profile-section input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    background-color: #3B3B59; /* Search input background */
+    color: white;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.main-content {
+    flex: 1;
+    background-color: #252540; /* Main content background */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.courses-section {
+    width: 100%;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3B3B59; /* Search input background */
+    color: white;
+    margin-right: 10px;
+}
+
+.search-bar .button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #56567A; /* Button background */
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.courses-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.courses-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.course {
+    background-color: #33334A; /* Course background */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.course img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.course h3 {
+    margin: 10px 0;
+}
+
+.course p {
+    margin: 10px 0;
+}
+
+.course button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #56567A; /* Button background */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.profilename{
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.courseDetails{
+    color: #FFFFFF;
+    text-decoration: none;
+}

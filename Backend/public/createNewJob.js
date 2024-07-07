@@ -44,4 +44,3 @@ document.getElementById('jobForm').addEventListener('submit', async (e) => {
         alert('Error: ' + error.message);
     }
 });
-

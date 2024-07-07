@@ -112,19 +112,6 @@ body {
     color: white;
     border-radius: 5px;
     cursor: pointer;
-    margin-right: 5px;
-}
-
-.postDescription{
-    display: flex;
-    align-items: center;
-    background-color: #33334A; /* Post input background */
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 0px;
-    color:white;
-    width:80%;
-    margin-right:5px;
 }
 
 .feed {
@@ -168,91 +155,12 @@ body {
 .post-actions button {
     padding: 5px 10px;
     border: none;
-    background-color: #56567A;  /*Button background */
+    background-color: #56567A; /* Button background */
     color: white;
     border-radius: 5px;
     cursor: pointer;
-   
 }
-
-.post-actions button:hover {
-    background-color: #3a3a66; /* Lighter shade on hover */
-}
-
-/* Styles for button when active (clicked) */
-.post-actions button:active {
-    background-color: #3B3B59; /* Even darker shade on click */
-}
-
 .profilename{
     color: #FFFFFF;
     text-decoration: none;
 }
-.joinEvent {
-    padding: 10px 20px;
-    border: none;
-    background-color: #37378f; /* Button background */
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.dropdown-menu {
-    position: relative;
-    display: inline-block;
-   background-color:#484866; /* Lighter shade on hover */
-
-    color: black;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    border-radius: 5px;
-    padding: 10px;
-    right: 0; /* Ensure it aligns with the ellipsis button */
-    top: 100%; /* Position it directly below the ellipsis button */
-    width: 100px; /* Adjust width to fit content */
-}
-
-.dropdown-menu button {
-    background: none;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    text-align: left;
-    width: 100%;
-}
-
-/* CSS for update form */
-.updateForm {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
-}
-
-.updateDescription {
-    width: 100%;
-    height: 80px;
-    resize: vertical;
-    margin-bottom: 10px;
-    padding: 5px;
-    font-size: 14px;
-}
-
-.submitUpdateButton {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin-top: 5px;
-    cursor: pointer;
-}
-
-.updateForm button:hover {
-    opacity: 0.8;
-}
-
-
