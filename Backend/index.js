@@ -7,12 +7,14 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser")
 const userRoute = require("./routes/users")
 const authRoute = require("./routes/auth")
-const Profilepostsroute = require("./routes/profileposts")
 const postRoute = require("./routes/posts")
 const courseRoute = require("./routes/courses")
-const videoRoute=require("./routes/videos");
-const groupRoute=require("./routes/groups");
+const eventRoute = require("./routes/events")
+const videosRoute = require("./routes/videos")
+const shareRoute = require("./routes/shares")
+const bookmarkRoute = require("./routes/bookmarks")
 const logoutRoute = require("./routes/logout")
+const jobRoute=require("./routes/jobs")
 const path = require('path');
 const cors = require('cors');
 
