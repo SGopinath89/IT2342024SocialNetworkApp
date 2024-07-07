@@ -1,1 +1,281 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialConnect Jobs</title>
+    <link rel="stylesheet" href="jobcss.css">
+    <script>
+          async function fetchJobs(searchQuery = '') {
+            try {
+                let url = '/api/jobs/jobs';
+                if (searchQuery) {
+                    url = `/api/jobs/search/${searchQuery}`;
+                }
+                const response = await fetch(url);
+                const jobs = await response.json();
+                const jobsList = document.querySelector('.jobs-list');
+                jobsList.innerHTML = '';
+                jobs.forEach(job => {
+                    const jobDiv = document.createElement('div');
+                    jobDiv.classList.add('job-card');
+                    jobDiv.innerHTML = `
+                        <div class="image-container">
+                            <img src="images/job.jpg" alt="Job Image">
+                           <button class="save-button" onclick="saveJob('${job._id}')">Save</button>
+                            <div class="ellipsis" onclick="toggleDropdown(event, '${job._id}')">...</div>
+                            <div class="dropdown-menu" id="dropdown-${job._id}">
+                                <button onclick="deleteJob('${job._id}')">Delete</button>
+                                <button onclick="showUpdateJobForm('${job._id}')">Update</button>
+                                <button onclick="shareJob('${job._id}')">Share</button>
+                            </div>
+                        </div>
+                        <div class="job-details">
+                            <h3>${job.title}</h3>
+                            <p><strong>Job Description:</strong> ${job.description}</p>
+                            <p><strong>Company:</strong> ${job.company}</p>
+                            <p><strong>Location:</strong> ${job.location}</p>
+                            <button onclick="window.location.href='${job.applyLink}'">Apply</button>
+                        </div>
+                    `;
+                    jobsList.appendChild(jobDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching jobs:', error);
+            }
+        }
+       
+
+        // Toggle ellipsis menu
+        document.addEventListener('click', function(event) {
+            const ellipsisButtons = document.querySelectorAll('.ellipsis');
+            ellipsisButtons.forEach(button => {
+                const menu = button.nextElementSibling;
+                if (button.contains(event.target)) {
+                    menu.classList.toggle('show');
+                } else {
+                    menu.classList.remove('show');
+                }
+            });
+        });
+
+    async function deleteJob(jobId) {
+    if (!jobId) {
+        console.error('Job ID is undefined');
+        return;
+    }
+    console.log(`Deleting job with ID: ${jobId}`); // Add this line to log the job ID
+    try {
+        const response = await fetch(`/api/jobs/${jobId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token') // Assuming token is stored in localStorage
+            }
+        });
+        if (response.ok) {
+            alert('Job deleted successfully');
+            fetchJobs(); // Refresh the job list
+        } else {
+            const errorData = await response.json();
+            console.error('Failed to delete job:', errorData);
+            alert(`Failed to delete job: ${errorData.message || response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error deleting job:', error);
+        alert(`Error deleting job: ${error.message}`);
+    }
+}
+
+function showUpdateJobForm(jobId) {
+            const modal = document.getElementById('updateJobModal');
+            modal.style.display = 'block';
+
+            fetch(`/api/jobs/byId/${jobId}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => response.json())
+            .then(job => {
+                document.getElementById('update-job-id').value = job._id;
+                document.getElementById('update-job-title').value = job.title;
+                document.getElementById('update-job-description').value = job.description;
+                document.getElementById('update-job-company').value = job.company;
+                document.getElementById('update-job-location').value = job.location;
+                document.getElementById('update-job-applyLink').value = job.applyLink;
+            })
+            .catch(error => console.error('Error fetching job details:', error));
+        }
+
+        async function updateJob() {
+            const jobId = document.getElementById('update-job-id').value;
+            console.log(`Updating job with ID: ${jobId}`); 
+
+            const title = document.getElementById('update-job-title').value;
+            const description = document.getElementById('update-job-description').value;
+            const company = document.getElementById('update-job-company').value;
+            const location = document.getElementById('update-job-location').value;
+            const applyLink = document.getElementById('update-job-applyLink').value;
+
+            try {
+                const response = await fetch(`/api/jobs/update/${jobId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify({ title, description, company, location, applyLink })
+                });
+
+                if (response.ok) {
+                    alert('Job updated successfully');
+                    closeUpdateJobModal();
+                    fetchJobs();
+                } else {
+                    const errorText = await response.text();
+                    console.error('Failed to update job:', errorText);
+                    alert(`Failed to update job: ${errorText}`);
+                }
+            } catch (error) {
+                console.error('Error updating job:', error);
+                alert(`Error updating job: ${error.message}`);
+            }
+        }
+
+        function closeUpdateJobModal() {
+            const modal = document.getElementById('updateJobModal');
+            modal.style.display = 'none';
+        }
+      
+
+        async function saveJob(jobId) {
+    try {
+        const response = await fetch(`/api/jobs/bookmark`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token') // Assuming token is stored in localStorage
+            },
+            body: JSON.stringify({ jobId })
+        });
+
+        if (response.ok) {
+            alert('Job saved to bookmarks');
+            // Optionally, update UI to reflect the job is saved
+        } else {
+            const errorData = await response.json();
+            console.error('Failed to save job:', errorData);
+            alert(`Failed to save job: ${errorData.message || response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error saving job:', error);
+        alert(`Error saving job: ${error.message}`);
+    }
+}
+
+async function shareJob(jobId, userIdToShareWith) {
+    try {
+        const response = await fetch('/api/jobs/share', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({ userId: userIdToShareWith, jobId })
+        });
+
+        if (response.ok) {
+            alert('Job shared successfully');
+            // Optionally, update UI to reflect the job is shared
+        } else {
+            const errorData = await response.json();
+            console.error('Failed to share job:', errorData);
+            alert(`Failed to share job: ${errorData.message || response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error sharing job:', error);
+        alert(`Error sharing job: ${error.message}`);
+    }
+}
+
+async function searchJobs() {
+            const searchInput = document.getElementById('search-input');
+            const searchQuery = searchInput.value.trim();
+            fetchJobs(searchQuery);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchJobs();
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') {
+                    searchJobs();
+                }
+            });
+        });
+        document.addEventListener('DOMContentLoaded', fetchJobs);
+ 
+ </script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>SocialConnect</h1>
+            <ul>
+                <li><a href="feed.html">Feed</a></li>
+                <li><a href="video.html">Videos</a></li>
+                
+                <li><a href="bookmarks.html">Bookmarks</a></li>
+                <li><a href="job.html">Jobs</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="groups.html">Groups</a></li>
+                <li><a href="courses.html">Courses</a></li>
+            </ul>
+            <div class="profile-section">
+                <input type="text" placeholder="Search...">
+                <div class="profile">
+                    <img src="images/profile.png" alt="Profile Picture">
+                    <a href="profile.html" class="profilename"><span>Profile Name</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="jobs-section">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search jobs...">
+                    <button class="search-button"   onclick="searchJobs()">Search</button> <br>
+                    <a href="create-new-job.html" class="button">Create New Job</a>
+                </div>
+                <h2>Current Jobs</h2>
+                <div class="jobs-list">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <!-- Update Job Modal -->
+<div id="updateJobModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeUpdateJobModal()">&times;</span>
+        
+        <h2>Update Job</h2>
+        <input type="hidden" id="update-job-id"><br>
+        <label for="update-job-title">Title:</label><br>
+        <input type="text" id="update-job-title" required><br>
+        <label for="update-job-description">Description:</label><br>
+        <textarea id="update-job-description" required></textarea><br>
+        <label for="update-job-company">Company:</label><br>
+        <input type="text" id="update-job-company" required><br>
+        <label for="update-job-location">Location:</label><br>
+        <input type="text" id="update-job-location" required><br>
+        <label for="update-job-applyLink">Apply Link:</label><br>
+        <input type="url" id="update-job-applyLink" required><br>
+        <button type="button" onclick="updateJob()">Update Job</button>    <br>    
+    
+    </div>
+</div>
+
+</body>
+</html>
