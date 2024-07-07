@@ -1,1 +1,30 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Event</title>
+    <link rel="stylesheet" href="neweventscss.css">
+</head>
+<body>
+   
+        <center> <div class="main-content">
+            <h2>Create New Event</h2>
+            <form id="createEventForm" enctype="multipart/form-data"><br>
+                <label for="eventname">Event Name:</label><br>
+                <input type="text" id="eventname" name="eventname" required><br>
+                
+                <label for="desc">Description:</label><br>
+                <textarea id="desc" name="desc" maxlength="500"></textarea><br>
+                
+                <label for="img">Image:</label><br>
+                <input type="file" id="img" name="img" style="width: 200px;"><br>
+                
+                <button type="submit">Create Event</button><br>
+                <button type="button" id="cancelButton">Cancel</button>
+            </form></center>
+        </div>
+    </div>
+    <script src="events.js"></script>
+</body>
+</html>
