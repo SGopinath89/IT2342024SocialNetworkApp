@@ -7,10 +7,12 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser")
 const userRoute = require("./routes/users")
 const authRoute = require("./routes/auth")
+const Profilepostsroute = require("./routes/profileposts")
 const postRoute = require("./routes/posts")
 const courseRoute = require("./routes/courses")
 const videoRoute=require("./routes/videos");
 const groupRoute=require("./routes/groups");
+const logoutRoute = require("./routes/logout")
 const path = require('path');
 const cors = require('cors');
 
@@ -53,6 +55,8 @@ app.use("/api/auth" , authRoute);
 app.use("/api/posts" , postRoute);
 app.use("/api/courses" , courseRoute);
 app.use("/api/videos", videoRoute);
+app.use('/api/profile', Profilepostsroute);
+app.use('/api',logoutRoute)
 app.use("/api/groups", groupRoute);
 
 app.use('/uploads', express.static('uploads'));
