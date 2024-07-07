@@ -13,10 +13,11 @@
             <ul>
                 <li><a href="feed.html">Feed</a></li>
                 <li><a href="video.html">Videos</a></li>
-                <li><a href="groups.html">Groups</a></li>
+                
                 <li><a href="bookmarks.html">Bookmarks</a></li>
                 <li><a href="job.html">Jobs</a></li>
                 <li><a href="events.html">Events</a></li>
+                <li><a href="groups.html">Groups</a></li>
                 <li><a href="courses.html">Courses</a></li>
             </ul>
             <div class="profile-section">
@@ -25,6 +26,7 @@
                     <img src="images/profile.png" alt="Profile Picture">
                     <a href="profile.html" class="profilename"><span>Profile Name</span></a>
                 </div>
+               
             </div>
         </div>
         <div class="main-content">
@@ -43,7 +45,8 @@
             </div>
         </div>
     </div>
-
+   
+    
     <script>
        document.getElementById('photoButton').addEventListener('click', function() {
             document.getElementById('postImage').click();
@@ -103,53 +106,157 @@
                 alert('Failed to create post');
             }
         });
+        
+      
+
 
 // Function to render posts
 function renderPosts(posts) {
-            const feedContainer = document.querySelector('.feed');
-            feedContainer.innerHTML = '';
+    const feedContainer = document.querySelector('.feed');
+    feedContainer.innerHTML = '';
 
-            posts.forEach(post => {
-                const postElement = document.createElement('div');
-                postElement.classList.add('post');
-                let contentHTML = `
-                    <div class="post-header">
-                        <img src="images/profile.png" alt="Profile Picture">
-                        <div class="post-info">
+    posts.forEach(post => {
+        const postElement = document.createElement('div');
+        postElement.classList.add('post');
+        let contentHTML = `
+            <div class="post-header">
+                <img src="images/profile.png" alt="Profile Picture">
+               <div class="post-info">
                             <h3>${post.userId.username}</h3>
                             <span>${new Date(post.createdAt).toLocaleString()}</span>
                         </div>
+            </div>
+			  </div>
+            <div class="post-content">
+                <p>${post.desc}</p>`;
+        if (post.img) {
+            contentHTML += `<img src="${post.img}" alt="Post Image">`;
+        }
+        contentHTML += `
+            <div class="post-details">
+                <span class="comment-count">Comments: <span id="comment-count-${post._id}">${post.comments.length}</span></span>
+                <span class="like-count">Likes: <span id="like-count-${post._id}">${post.likes.length}</span></span>
+            </div>`;
+        contentHTML += `</div>
+		
+                             <div class="post-upload-section">
+                        <button class="savePost" onclick="savePost('${post._id}')"style="background-color:red;border-radius:50px;">Save</button>
                     </div>
-                    <div class="post-content">
-                        <p>${post.desc}</p>
-                        <img src="${post.img}" alt="Post Image">
-                    </div>
-                    <div class="post-actions">
-                        <button onclick="likePost('${post._id}')">Like</button>
-                        <button onclick="showCommentInput('${post._id}')">Comment</button>
-                        <div class="ellipsis-container">
-                            <button class="ellipsis-btn" onclick="toggleDropdown('${post._id}')">...</button>
-                            <div class="dropdown-menu" id="dropdown-${post._id}" style="display: none;">
-                            <button onclick="deletePost('${post._id}')">Delete</button>
-                                <button onclick="updatePost('${post._id}')">Update</button>
-                                <button onclick="sharePost('${post._id}')">Share</button>
+            <div class="post-actions">
+                <button onclick="likePost('${post._id}')">Like</button>
+                <button onclick="showCommentInput('${post._id}')">Comment</button>
+              
+               <div class="ellipsis-container">
+                            <button class="ellipsis-btn" onclick="toggleDropdown('${post._id}')"> ⋮</button>
+                
+                     <div class="dropdown-menu" id="dropdown-${post._id}" style="display: none;">
+					 <button onclick="showUpdateForm('${post._id}')">Update</button>
+                        <button onclick="deletePost('${post._id}')">Delete</button>
+                        <button onclick="sharePost('${post._id}')">Share</button>
+                    
+                </div>
+            </div>
+            <div class="comment-section" id="comment-section-${post._id}" style="display: none;"><br>
+                            <textarea id="comment-input-${post._id}" placeholder="Write a comment..."></textarea><br>
+                            <button onclick="commentOnPost('${post._id}')">Submit Comment</button>
                         </div>
-                        </div>
-                    <div class="comment-section" id="comment-section-${post._id}" style="display: none;">
-                        <textarea id="comment-input-${post._id}" placeholder="Write a comment..."></textarea>
-                        <button onclick="commentOnPost('${post._id}')">Submit Comment</button>
-                    </div>
 
-                    <div id="updateForm-${post._id}" class="updateForm" style="display: none;">
-                        <textarea id="updateDescription-${post._id}" class="updateDescription" placeholder="Update your post..." required></textarea>
-                        <button class="submitUpdateButton" data-post-id="${post._id}">Submit Update</button>
-                    </div>
-                    </div>
+                      
+                    
                 `;
 
-                postElement.innerHTML = contentHTML;
-                feedContainer.appendChild(postElement);
-            });
+       
+
+        contentHTML += `
+                
+            </div>
+            <div class="update-form" id="update-form-${post._id}" style="display:none;"><br>
+                <input type="text" id="update-description-${post._id}" placeholder="Update your post description..." value="${post.desc}"><br>
+                <input type="file" id="update-image-${post._id}"><br>
+                <button onclick="updatePost('${post._id}')">Update Post</button>
+                <button onclick="hideUpdateForm('${post._id}')">Cancel</button>
+            </div>`;
+          
+        postElement.innerHTML = contentHTML;
+        feedContainer.appendChild(postElement);
+    });
+}
+
+    
+	function showUpdateForm(postId) {
+    document.getElementById(`update-form-${postId}`).style.display = 'block';
+}
+
+function hideUpdateForm(postId) {
+    document.getElementById(`update-form-${postId}`).style.display = 'none';
+}
+
+async function updatePost(postId) {
+    const description = document.getElementById(`update-description-${postId}`).value;
+    const imageInput = document.getElementById(`update-image-${postId}`);
+    const imageFile = imageInput.files[0];
+
+    const formData = new FormData();
+    formData.append('description', description);
+    if (imageFile) {
+        formData.append('img', imageFile);
+    }
+
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token not available');
+        }
+
+        const response = await fetch(`/api/posts/${postId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update post');
+        }
+
+        const result = await response.json();
+        console.log('Post updated successfully:', result);
+        alert('Post updated successfully!');
+
+        hideUpdateForm(postId);
+        fetchAllPosts();
+    } catch (error) {
+        console.error('Error updating post:', error);
+        alert('Failed to update post');
+    }
+}
+
+        
+        async function savePost(postId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/posts/bookmarks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ postId })  // Ensure eventId is correctly set
+                });
+
+                if (response.ok) {
+                    alert('post saved to bookmarks');
+                    // Optionally update UI
+                } else {
+                    const errorData = await response.json();
+                    //console.error('Failed to save event:', errorData);
+                    //alert(`Failed to save event: ${errorData.message || response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Error saving post:', error);
+                alert(`Error saving post: ${error.message}`);
+            }
         }
 
 
@@ -167,25 +274,8 @@ function renderPosts(posts) {
             }
         }
 
-       // Function to show update form for a post
-function showUpdateForm(postId) {
-    const updateForm = document.getElementById(`updateForm-${postId}`);
-    if (updateForm) {
-        updateForm.style.display = 'block'; // Ensure the form is set to display: block
-    } else {
-        console.error(`Update form ${postId} not found`);
-    }
-}
 
-// Function to hide update form for a post
-function hideUpdateForm(postId) {
-    const updateForm = document.getElementById(`updateForm-${postId}`);
-    if (updateForm) {
-        updateForm.style.display = 'none'; // Hide the update form
-    } else {
-        console.error(`Update form ${postId} not found`);
-    }
-}
+
 
 // Function to fetch post details for update
 async function fetchPostDetails(postId) {
@@ -211,7 +301,8 @@ async function fetchPostDetails(postId) {
         console.log('Fetched Post Details:', post);
 
         // Populate update form fields with fetched post data
-        document.getElementById(`updateDescription-${postId}`).value = post.description;
+        document.getElementById(`comment-count-${postId}`).textContent = postData.comments.length;
+        document.getElementById(`like-count-${postId}`).textContent = postData.likes.length;
 
         // Show the update form
         showUpdateForm(postId);
@@ -221,56 +312,8 @@ async function fetchPostDetails(postId) {
     }
 }
 
-// Function to update a post
-async function updatePost(postId) {
-    const updatedDescription = document.getElementById(`updateDescription-${postId}`).value;
 
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('Token not available');
-        }
 
-        const response = await fetch(`/api/posts/${postId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ description: updatedDescription })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to update post');
-        }
-
-        const result = await response.json();
-        console.log('Post updated successfully:', result);
-        alert('Post updated successfully!');
-
-        // Hide update form after successful update
-        hideUpdateForm(postId);
-
-        // Optionally, fetch and render updated posts
-        fetchAllPosts();
-    } catch (error) {
-        console.error('Error updating post:', error);
-        alert('Failed to update post');
-    }
-}
-
-// Event listener for update button clicks
-document.addEventListener('DOMContentLoaded', () => {
-    document.body.addEventListener('click', async (event) => {
-        if (event.target.classList.contains('updateButton')) {
-            const postId = event.target.dataset.postId;
-            await fetchPostDetails(postId);
-        } else if (event.target.classList.contains('submitUpdateButton')) {
-            const postId = event.target.dataset.postId;
-            await updatePost(postId);
-        }
-    });
-});
 
         async function deletePost(postId) {
         try {
@@ -384,43 +427,89 @@ function renderSharedItems(sharedItems) {
 
             const contentHTML = `
                 <div class="post-header">
+                    
                     <img src="images/profile.png" alt="Profile Picture">
+                    
                     <div class="post-info">
                         <h3>${item.userId.username}</h3>
                         <span>${new Date(item.sharedAt).toLocaleString()}</span>
                     </div>
+                    <button onclick="saveShare('${item._id}')" style="position:relative;background-color:red;color:white;border-radius: 50px;padding: 7px 10px;width:50px,height:30px;border: none;right:-100px;">Save</button>
                 </div>
                 <div class="post-content">
                     <img src="${eventImage}" alt="Event Image">
                     <h4>${event.eventname}</h4>
                     <p>${event.desc}</p>
+                     
                     <button onclick="joinEvent('${event._id}')" class="joinEvent">Join Event</button>
                 </div>
+                
                 <div class="post-actions">
+                    
                     <div class="ellipsis-container">
                        <div class="ellipsis-container">
                         <button class="ellipsis-btn" onclick="toggleDropdown('${item._id}')">...</button>
                         <div class="dropdown-menu" id="dropdown-${item._id}" style="display: none;">
                             <button onclick="deleteShare('${event._id}')">Delete</button>
-                                <button onclick="UpdateShare('${event._id}')">Update</button>
-                                <button onclick="share('${event._id}')">Share</button>
+                              
                     </div>
                     </div>
                     </div>
             `;
 
             postElement.innerHTML = contentHTML;
-        } else if (item.jobDetails) {
+        } 
+        if (item.videoDetails) {
+            const video = item.videoDetails;
+            const vVideo = video.img ? `/${event.img}` : 'images/default-event.jpg';
+
+            const contentHTML = `
+                <div class="post-header">
+                    
+                    <img src="images/profile.png" alt="Profile Picture">
+                    
+                    <div class="post-info">
+                        <h3>${item.userId.username}</h3>
+                        <span>${new Date(item.sharedAt).toLocaleString()}</span>
+                    </div>
+                    <button onclick="saveShare('${item._id}')" style="position:relative;background-color:red;color:white;border-radius: 50px;padding: 7px 10px;width:50px,height:30px;border: none;right:-100px;">Save</button>
+                </div>
+                <div class="post-content">
+                    <img src="${eventImage}" alt="Event Image">
+                    <h4>${event.eventname}</h4>
+                    <p>${event.desc}</p>
+                     
+                    <button onclick="joinEvent('${event._id}')" class="joinEvent">Join Event</button>
+                </div>
+                
+                <div class="post-actions">
+                    
+                    <div class="ellipsis-container">
+                       <div class="ellipsis-container">
+                        <button class="ellipsis-btn" onclick="toggleDropdown('${item._id}')">...</button>
+                        <div class="dropdown-menu" id="dropdown-${item._id}" style="display: none;">
+                            <button onclick="deleteShare('${event._id}')">Delete</button>
+                              
+                    </div>
+                    </div>
+                    </div>
+            `;
+
+            postElement.innerHTML = contentHTML;
+        }
+            else if (item.jobDetails) {
             const job = item.jobDetails;
             const jobImage = job.imageUrl || 'images/job.jpg';
 
             const contentHTML = `
                 <div class="post-header">
+                   
                     <img src="images/profile.png" alt="Profile Picture">
                     <div class="post-info">
                         <h3>${item.userId.username}</h3>
                         <span>${new Date(item.sharedAt).toLocaleString()}</span>
                     </div>
+                     <button onclick="saveShare('${item._id}')" style="position:relative;background-color:red;color:white;border-radius: 50px;padding: 7px 10px;width:50px,height:30px;border: none;right:-100px;">Save</button>
                 </div>
                 <div class="post-content">
                     <img src="${jobImage}" alt="Job Image">
@@ -428,19 +517,20 @@ function renderSharedItems(sharedItems) {
                     <p>${job.description}</p>
                     <p><strong>Company:</strong> ${job.company}</p>
                     <p><strong>Location:</strong> ${job.location}</p>
-                    <a href="${job.applyLink}" target="_blank">Apply Here</a>
-                </div>
+                    <button  style="background-color: #37378f;padding: 10px 20px;border:none;border-radius:5px;"><a href="${job.applyLink}" style=" color:white;" target="_blank">Apply Here</a></button>
+                   
+                 </div>
               <div class="post-actions">
     
                     <div class="ellipsis-container">
                         <button class="ellipsis-btn" onclick="toggleDropdown('${item._id}')">...</button>
                         <div class="dropdown-menu" id="dropdown-${item._id}" style="display: none;">
                              <button onclick="deleteShare('${job._id}')">Delete</button>
-                                <button onclick="UpdateShare('${job._id}')">Update</button>
-                                <button onclick="share('${job._id}')">Share</button>
+                               
                     </div>
                     </div>
                     </div>
+                   
             `;
 
             postElement.innerHTML = contentHTML;
@@ -452,30 +542,42 @@ function renderSharedItems(sharedItems) {
 			
 			const contentHTML = `
                 <div class="post-header">
+                  
                     <img src="images/profile.png" alt="Profile Picture">
+                     
                     <div class="post-info">
                         <h3>${item.userId.username}</h3>
                         <span>${new Date(item.sharedAt).toLocaleString()}</span>
                     </div>
+                <button onclick="saveShare('${item._id}')" style="position:relative;background-color:red;color:white;border-radius: 50px;padding: 7px 10px;width:50px,height:30px;border: none;right:-100px;">Save</button>
+
                 </div>
 				 <div class="post-content">
+                    
                     <img src="${postImage}" alt="Post Image">
-                    <h4>${post.desc}</h4>                             
+                    <h4>${post.desc}</h4>              
+                                 
                 </div>
 				  <div class="post-actions">
                         <button onclick="likePost('${post._id}')">Like</button>
                         <button onclick="showCommentInput('${post._id}')">Comment</button>
+                        
                         <div class="ellipsis-container">
                            <div class="ellipsis-container">
                         <button class="ellipsis-btn" onclick="toggleDropdown('${item._id}')">...</button>
                         <div class="dropdown-menu" id="dropdown-${item._id}" style="display: none;">
                             <button onclick="deleteShare('${post._id}')">Delete</button>
-                                <button onclick="UpdateShare('${post._id}')">Update</button>
-                                <button onclick="share('${post._id}')">Share</button>
+                               
                     </div>
                     </div>
                     </div>
 					`;
+                    document.querySelectorAll('.save-button').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const eventId = button.dataset.eventid; // Ensure dataset is correctly set
+                            saveEvent(eventId);
+                        });
+                    });
 					
 		 postElement.innerHTML = contentHTML;
         }
@@ -582,32 +684,7 @@ window.onload = function () {
             }
         }
 
-        router.put('/:postId', auth, upload.single('img'), async (req, res) => {
-    try {
-        const postId = req.params.postId;
-        const { description } = req.body;
-        const img = req.file ? req.file.path : null;
-
-        const post = await Post.findById(postId);
-        if (!post) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-
-        post.desc = description || post.desc; // Update description if provided, otherwise keep the existing value
-        post.img = img || post.img; // Update image if provided, otherwise keep the existing value
-        post.updatedAt = Date.now();
-
-        const updatedPost = await post.save();
-        res.json({
-            message: 'Post updated successfully',
-            post: updatedPost
-        });
-    } catch (error) {
-        console.error('Error updating post:', error);
-        res.status(500).json({ message: 'Failed to update post' });
-    }
-});
-
+     
 async function sharePost(postId, userIdToShareWith) {
     try {
         const response = await fetch('/api/posts/share', {
@@ -633,65 +710,65 @@ async function sharePost(postId, userIdToShareWith) {
     }
 }
 
-async function deleteShare(shareId) {
+
+async function saveShare(itemId) {
             try {
                 const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error('Token not available');
-                }
-
-                const response = await fetch(`/api/shares/shared/${shareId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to delete post');
-                }
-
-                console.log('Post deleted successfully');
-                alert('Post deleted successfully!');
-
-                fetchAllPosts();
-            } catch (error) {
-                console.error('Error deleting post:', error);
-                alert('Failed to delete post');
-            }
-        }
-
-        async function sharePost(postId) {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    throw new Error('Token not available');
-                }
-
-                const response = await fetch('/api/shares/', {
+                const response = await fetch(`/api/shares/bookmark`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': 'Bearer ' + token
                     },
-                    body: JSON.stringify({
-                        itemId: postId,
-                        itemModel: 'Post'
-                    })
+                    body: JSON.stringify({ itemId })  // Ensure eventId is correctly set
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to share post');
+                if (response.ok) {
+                    alert('share post saved to bookmarks');
+                    // Optionally update UI
+                } else {
+                    const errorData = await response.json();
+                    //console.error('Failed to save share:', errorData);
+                    //alert(`Failed to save share: ${errorData.message || response.statusText}`);
                 }
-
-                console.log('Post shared successfully');
-                alert('Post shared successfully!');
             } catch (error) {
-                console.error('Error sharing post:', error);
-                alert('Failed to share post');
+                console.error('Error saving event:', error);
+                alert(`Error saving event: ${error.message}`);
             }
         }
 
-    </script>
-</body>
-</html>
+
+        async function deleteShare(shareId) {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token not available');
+        }
+
+        const response = await fetch(`/api/shares/shared/${shareId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete shared item');
+        }
+
+        const result = await response.json();
+        console.log('Shared item deleted successfully:', result);
+        alert('Shared item deleted successfully!');
+
+        // Fetch and render updated shared items after deletion
+        fetchSharedItems();
+    } catch (error) {
+        console.error('Error deleting shared item:', error);
+        alert(`Failed to delete shared item: ${error.message}`);
+    }
+}
+
+</script>
+       </body>
+       </html>
