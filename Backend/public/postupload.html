@@ -1,1 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Profile</title>
+        <link rel="stylesheet" href="upload.css">
+    </head>
+    <body>
+        <form id="uploadForm"><br>
+            <h1>Upload your photo/video</h1><br>
+            <label for="title">Title:</label><br>
+            <input type="text" id="title" name="title" required><br><br><br>
+            <label for="description">Description:</label><br>
+            <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br><br>
+    
+            <label for="post">Upload your video/post here:</label><br><br>
+            <input type="file" id="file" name="file" accept="image/*, video/*" required><br><br><br><br>
+            <button type="submit">Upload</button>
+            <a href="profile.html"><input type="button">Cancel</a>
+        </form>
+        <p id="message"></p>
+        <script src="postupload.js"></script>
+    </body>
+</html>
 
