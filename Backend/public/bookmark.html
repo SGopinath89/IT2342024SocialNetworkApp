@@ -102,7 +102,7 @@
                             case 'Event':
                                 title = item.eventname || 'Untitled';
                                 description = item.desc || 'No description available';
-                                imageUrl = item.img ? `/${item.img}` : ''; // Adjust path if necessary
+                                imageUrl = item.img ? `/${item.img}` : ''; 
                                 break;
                             case 'Post':
                                  description = item.desc || 'Untitled';
@@ -111,12 +111,12 @@
                                case 'Video':
                                 title = item.title || 'Untitled';
                                 description = item.desc || 'No description available';
-                                videoUrl = item.path ?` /${item.path}` : ''; // Adjust path if necessary
+                                videoUrl = item.path ?` /${item.path}` : ''; 
                                break;
                             case 'Profile':
                                 title = item.title || 'Untitled';
                                 description = item.description || 'No description available';
-                               path = item.path ? `/${item.path}` : ''; // Adjust path if necessary
+                               path = item.path ? `/${item.path}` : ''; 
                                 break;
                             
                             default:
@@ -165,7 +165,7 @@
 
                 if (response.ok) {
                     alert('Bookmark deleted successfully');
-                    fetchBookmarks(); // Refresh bookmarks after deletion
+                    fetchBookmarks(); 
                 } else {
                     alert('Failed to delete bookmark');
                 }
