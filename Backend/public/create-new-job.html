@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Job</title>
+    <link rel="stylesheet" href="createNewJob.css">
+</head>
+<body>
+    <div class="jobForm">
+     <form id="jobForm">
+            <h2>Create New Job</h2>
+            <p>
+                <label for="title">Job Title</label>
+                <input type="text" class="box" id="title" name="title" required><br>
+
+                <label for="description">Job Description</label>
+                <textarea class="box" id="description" name="description" required></textarea><br>
+
+                <label for="company">Company</label>
+                <input type="text" class="box" id="company" name="company" required><br>
+
+                <label for="location">Location</label>
+                <input type="text" class="box" id="location" name="location" required><br>
+
+                <label for="applyLink">Apply Link</label>
+                <input type="url" class="box" id="applyLink" name="applyLink" required><br>
+            </p>
+            <button type="submit">Submit</button>
+            <button type="button" onclick="window.location.href='job.html'">Cancel</button>
+        
+        </form>
+    </div>
+    <script src="createNewJob.js"></script>
+</body>
+</html>
