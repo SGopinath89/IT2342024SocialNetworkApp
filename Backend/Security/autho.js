@@ -1,19 +1,39 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const secretKey = "project@vau.lk";
 
-function auth(req, res, next) {
-    const authHeader = req.header('Authorization');
-    if (!authHeader) return res.status(401).send({ message: 'Access Denied. No Token Provided.' });
-
-    const token = authHeader.replace('Bearer ', '');
-    if (!token) return res.status(401).send({ message: 'Access Denied. No Token Provided.' });
-
+// Verify the token
+function verifyToken(req, res, next) {
     try {
-        const decoded = jwt.verify(token, 'your_secret_key');
-        req.user = decoded; // Attach the decoded token to the request object
-        next();
-    } catch (ex) {
-        res.status(400).send({ message: 'Invalid Token.' });
+        const token = req.headers.authorization;
+        if (!token) {
+            console.log("Token not available");
+            return res.status(403).send("Token not available");
+        }
+        const actualToken = token.split(" ")[1];
+        jwt.verify(actualToken, secretKey, (err, decoded) => {
+            if (err) {
+                console.log("Invalid token");
+                return res.status(401).json({ error_message: "Invalid token" });
+            }
+           console.log("Token:", actualToken);
+            console.log("Decoded Token:", decoded);
+
+           
+            req.user = { id: decoded.userId || decoded.id };
+            //req.user =decoded
+            console.log("User ID:", req.user.id);
+
+            next();
+        });
+    } catch (error) {
+        console.log("Error:", error.message);
+        return res.status(500).json({ error_message: error.message });
     }
 }
 
-module.exports = auth;
+
+
+module.exports = { verifyToken };
+
+
+ 
