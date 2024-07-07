@@ -13,10 +13,11 @@
             <ul>
                 <li><a href="feed.html">Feed</a></li>
                 <li><a href="video.html">Videos</a></li>
-                <li><a href="groups.html">Groups</a></li>
+               
                 <li><a href="bookmarks.html">Bookmarks</a></li>
                 <li><a href="job.html">Jobs</a></li>
                 <li><a href="events.html">Events</a></li>
+                <li><a href="groups.html">Groups</a></li>
                 <li><a href="courses.html">Courses</a></li>
             </ul>
             <div class="profile-section">
@@ -31,7 +32,7 @@
             <div class="events-section">
                 <div class="search-bar">
                     <input id="searchInput" type="text" placeholder="Search events...">
-                    <button id="searchButton" class="search-button">Search</button>
+                    <button class="search-button">Search</button>
                     <a href="create-new-event.html" class="button">Create New Event</a>
                 </div>
                 <h2>Upcoming Events</h2>
@@ -43,48 +44,43 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchEvents();
-
-            document.getElementById('searchButton').addEventListener('click', () => {
-                const query = document.getElementById('searchInput').value;
-                fetchEvents(query);
-            });
+        // Fetch events and display
+        window.addEventListener('load', async function () {
+            await fetchEvents();
         });
 
         async function fetchEvents(query = '') {
-            const eventsList = document.getElementById('eventsList');
-
             try {
-                const token = localStorage.getItem('token');
-                const endpoint = query ? `/api/events/search/${query}` : '/api/events/all';
-                const response = await fetch(endpoint, {
+                const token = localStorage.getItem('token'); 
+                const response = await fetch(`/api/events/all${query ? `/search/${query}` : ''}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch events');
+                if (response.status === 304) {
+                    // No action needed, use cached data or handle as per your logic
+                    console.log('Using cached data for events');
+                    return;
                 }
 
                 const events = await response.json();
+                if (response.ok) {
+                
+                    const eventsList = document.getElementById('eventsList');
+                    eventsList.innerHTML = '';
 
-                eventsList.innerHTML = '';
-                if (events.length === 0) {
-                    eventsList.innerHTML = '<p>No events found.</p>';
-                } else {
+                    
                     events.forEach(event => {
                         const eventElement = document.createElement('div');
                         eventElement.classList.add('event');
-
                         eventElement.innerHTML = `
                             <h3>${event.eventname}</h3>
                             <p>${event.desc}</p>
                             <img src="${event.img}" alt="${event.eventname}">
                             <div class="actions">
                                 <button class="joinButton" data-eventid="${event._id}">Join Event</button>
-                                <button class="saveButton" data-eventid="${event._id}">Save</button>
+                                <button class="save-button" onclick="saveEvent('${event._id}')" style="background-color:red;border-radius:50px;">Save</button>
                                 <div class="dropdown">
                                     <button class="ellipsis">...</button>
                                     <div class="dropdown-content">
@@ -114,35 +110,44 @@
                         button.addEventListener('click', () => shareEvent(button.dataset.eventid));
                     });
 
-                    document.querySelectorAll('.saveButton').forEach(button => {
-                        button.addEventListener('click', () => saveEvent(button.dataset.eventid));
+                    document.querySelectorAll('.save-button').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const eventId = button.dataset.eventid; // Ensure dataset is correctly set
+                            saveEvent(eventId);
+                        });
                     });
+
+                } else {
+                    console.error('Failed to fetch events:', events.message);
                 }
             } catch (error) {
-                console.error('Error fetching events:', error);
-                eventsList.innerHTML = '<p>Error loading events. Please try again later.</p>';
+                console.error('Error:', error);
+                alert('Failed to fetch events');
             }
         }
 
         async function saveEvent(eventId) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('/api/events/bookmark', {
+                const response = await fetch(`/api/events/bookmark`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': 'Bearer ' + token
                     },
-                    body: JSON.stringify({ eventId })
+                    body: JSON.stringify({ eventId })  
                 });
 
                 if (response.ok) {
                     alert('Event saved to bookmarks');
+                   
                 } else {
-                    alert('Failed to save event');
+                    const errorData = await response.json();
+                    
                 }
             } catch (error) {
                 console.error('Error saving event:', error);
+                alert(`Error saving event: ${error.message}`);
             }
         }
 
@@ -166,10 +171,13 @@
                     if (response.ok) {
                         alert('Successfully joined the event!');
                     } else {
-                        alert('Failed to join event');
+                        const data = await response.json();
+                        console.error('Failed to join event:', data.message);
+                        alert('Failed to join event. Please try again later.');
                     }
                 } catch (error) {
-                    console.error('Error joining event:', error);
+                    console.error('Error:', error);
+                    alert('Failed to join event. Please try again later.');
                 }
             } else {
                 alert('Please fill in all fields to join the event.');
@@ -177,8 +185,9 @@
         }
 
         async function updateEvent(eventId) {
-            const eventname = prompt('Enter new event name:');
-            const desc = prompt('Enter new event description:');
+            const eventname = prompt("Enter new event name:");
+            const desc = prompt("Enter new event description:");
+            // const img = prompt("Enter new event image URL:");
 
             const updatedData = { eventname, desc };
 
@@ -193,21 +202,24 @@
                     body: JSON.stringify(updatedData)
                 });
 
+                const data = await response.json();
                 if (response.ok) {
                     alert('Event updated successfully');
                     window.location.reload();
                 } else {
-                    alert('Failed to update event');
+                    alert(`Error updating event: ${data.message}`);
                 }
             } catch (error) {
                 console.error('Error updating event:', error);
+                alert('Error updating event');
             }
         }
 
         async function deleteEvent(eventId) {
-            if (confirm('Are you sure you want to delete this event?')) {
+            if (confirm("Are you sure you want to delete this event?")) {
                 try {
                     const token = localStorage.getItem('token');
+                    console.log('Token:', token); 
                     const response = await fetch(`/api/events/delete/${eventId}`, {
                         method: 'DELETE',
                         headers: {
@@ -215,19 +227,24 @@
                         }
                     });
 
+                    const data = await response.json();
+                    console.log('Response data:', data); 
                     if (response.ok) {
                         alert('Event deleted successfully');
                         window.location.reload();
                     } else {
-                        alert('Failed to delete event');
+                        alert(`Error deleting event: ${data.message}`);
                     }
                 } catch (error) {
                     console.error('Error deleting event:', error);
+                    alert('Error deleting event');
                 }
             }
         }
 
         async function shareEvent(eventId) {
+            console.log('Sharing event with ID:', eventId);
+
             try {
                 const token = localStorage.getItem('token');
                 const response = await fetch(`/api/events/${eventId}/share`, {
@@ -236,16 +253,23 @@
                         'Authorization': `Bearer ${token}`
                     }
                 });
-
+                const data = await response.json();
                 if (response.ok) {
                     alert('Event shared successfully');
                 } else {
-                    alert('Failed to share event');
+                    alert(`Error sharing event: ${data.message}`);
                 }
             } catch (error) {
                 console.error('Error sharing event:', error);
+                alert('Error sharing event');
             }
         }
+
+        // Add event listener for the search button
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value;
+            fetchEvents(query);
+        });
     </script>
 </body>
 </html>
