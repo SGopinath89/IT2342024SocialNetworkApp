@@ -1,1 +1,187 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1C1C2B; /* Dark background */
+    color: white;
+    margin: 0;
+    padding: 0;
+}
 
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #252540; /* Sidebar background */
+    padding: 20px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.sidebar h1 {
+    color: #FFFFFF; /* White text */
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #B0B0D5; /* Light grey text */
+    font-size: 18px;
+}
+
+.sidebar ul li a:hover {
+    color: white;
+}
+
+.profile-section {
+    margin-top: 20px;
+}
+
+.profile-section input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    background-color: #3B3B59; /* Search input background */
+    color: white;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.main-content {
+    flex: 1;
+    background-color: #252540; /* Main content background */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.bookmarks-section {
+    width: 100%;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    width: 80%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3B3B59; /* Search input background */
+    color: white;
+}
+
+.bookmarks-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.bookmarks-list {
+    display: grid;
+ text-align: center;
+  /*  grid-template-columns: repeat(3, 1fr);*/
+    gap: 16px;
+}
+
+.bookmark {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #252540;
+    color: #fff;
+}
+
+.bookmark-header h3 {
+    margin: 0 0 10px;
+}
+
+.bookmark-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.bookmark-content p {
+    margin: 0 0 5px;
+}
+
+.bookmark-content button a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.bookmark-content button {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.bookmark-content button:hover {
+    background-color: #0056b3;
+}
+
+.profilename{
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.event-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+.deleteButton{
+    padding: 5px 10px;
+    border: none;
+    background-color: #56567A; /* Button background */
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+}
+.searchButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #56567A; /* Green background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
