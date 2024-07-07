@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialConnect Events</title>
+    <link rel="stylesheet" href="eventscss.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>SocialConnect</h1>
+            <ul>
+                <li><a href="feed.html">Feed</a></li>
+                <li><a href="video.html">Videos</a></li>
+               
+                <li><a href="bookmarks.html">Bookmarks</a></li>
+                <li><a href="job.html">Jobs</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="groups.html">Groups</a></li>
+                <li><a href="courses.html">Courses</a></li>
+            </ul>
+            <div class="profile-section">
+                <input type="text" placeholder="Search...">
+                <div class="profile">
+                    <img src="images/profile.png" alt="Profile Picture">
+                    <a href="profile.html" class="profilename"><span>Profile Name</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="events-section">
+                <div class="search-bar">
+                    <input id="searchInput" type="text" placeholder="Search events...">
+                    <button class="search-button">Search</button>
+                    <a href="create-new-event.html" class="button">Create New Event</a>
+                </div>
+                <h2>Upcoming Events</h2>
+                <div class="events-list" id="eventsList">
+                    <!-- Events will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch events and display
+        window.addEventListener('load', async function () {
+            await fetchEvents();
+        });
+
+        async function fetchEvents(query = '') {
+            try {
+                const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+                const response = await fetch(`/api/events/all${query ? `/search/${query}` : ''}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 304) {
+                    // No action needed, use cached data or handle as per your logic
+                    console.log('Using cached data for events');
+                    return;
+                }
+
+                const events = await response.json();
+                if (response.ok) {
+                    // Clear existing events list
+                    const eventsList = document.getElementById('eventsList');
+                    eventsList.innerHTML = '';
+
+                    // Loop through events and create HTML elements
+                    events.forEach(event => {
+                        const eventElement = document.createElement('div');
+                        eventElement.classList.add('event');
+                        eventElement.innerHTML = `
+                            <h3>${event.eventname}</h3>
+                            <p>${event.desc}</p>
+                            <img src="${event.img}" alt="${event.eventname}">
+                            <div class="actions">
+                                <button class="joinButton" data-eventid="${event._id}">Join Event</button>
+                                <button class="save-button" onclick="saveEvent('${event._id}')" style="background-color:red;border-radius:50px;">Save</button>
+                                <div class="dropdown">
+                                    <button class="ellipsis">...</button>
+                                    <div class="dropdown-content">
+                                        <a href="#" class="updateButton" data-eventid="${event._id}">Update</a>
+                                        <a href="#" class="deleteButton" data-eventid="${event._id}">Delete</a>
+                                        <a href="#" class="shareButton" data-eventid="${event._id}">Share</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        eventsList.appendChild(eventElement);
+                    });
+
+                    document.querySelectorAll('.joinButton').forEach(button => {
+                        button.addEventListener('click', () => joinEvent(button.dataset.eventid));
+                    });
+
+                    document.querySelectorAll('.updateButton').forEach(button => {
+                        button.addEventListener('click', () => updateEvent(button.dataset.eventid));
+                    });
+
+                    document.querySelectorAll('.deleteButton').forEach(button => {
+                        button.addEventListener('click', () => deleteEvent(button.dataset.eventid));
+                    });
+
+                    document.querySelectorAll('.shareButton').forEach(button => {
+                        button.addEventListener('click', () => shareEvent(button.dataset.eventid));
+                    });
+
+                    document.querySelectorAll('.save-button').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const eventId = button.dataset.eventid; // Ensure dataset is correctly set
+                            saveEvent(eventId);
+                        });
+                    });
+
+                } else {
+                    console.error('Failed to fetch events:', events.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to fetch events');
+            }
+        }
+
+        async function saveEvent(eventId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/events/bookmark`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ eventId })  // Ensure eventId is correctly set
+                });
+
+                if (response.ok) {
+                    alert('Event saved to bookmarks');
+                    // Optionally update UI
+                } else {
+                    const errorData = await response.json();
+                    //console.error('Failed to save event:', errorData);
+                    //alert(`Failed to save event: ${errorData.message || response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Error saving event:', error);
+                alert(`Error saving event: ${error.message}`);
+            }
+        }
+
+        async function joinEvent(eventId) {
+            const name = prompt('Enter your name:');
+            const idNumber = prompt('Enter your ID number:');
+            const contactNumber = prompt('Enter your contact number:');
+
+            if (name && idNumber && contactNumber) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/events/${eventId}/join`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ name, idNumber, contactNumber })
+                    });
+
+                    if (response.ok) {
+                        alert('Successfully joined the event!');
+                    } else {
+                        const data = await response.json();
+                        console.error('Failed to join event:', data.message);
+                        alert('Failed to join event. Please try again later.');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to join event. Please try again later.');
+                }
+            } else {
+                alert('Please fill in all fields to join the event.');
+            }
+        }
+
+        async function updateEvent(eventId) {
+            const eventname = prompt("Enter new event name:");
+            const desc = prompt("Enter new event description:");
+            // const img = prompt("Enter new event image URL:");
+
+            const updatedData = { eventname, desc };
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/events/update/${eventId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Event updated successfully');
+                    window.location.reload();
+                } else {
+                    alert(`Error updating event: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error updating event:', error);
+                alert('Error updating event');
+            }
+        }
+
+        async function deleteEvent(eventId) {
+            if (confirm("Are you sure you want to delete this event?")) {
+                try {
+                    const token = localStorage.getItem('token');
+                    console.log('Token:', token); // Debug log
+                    const response = await fetch(`/api/events/delete/${eventId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    const data = await response.json();
+                    console.log('Response data:', data); // Debug log
+                    if (response.ok) {
+                        alert('Event deleted successfully');
+                        window.location.reload();
+                    } else {
+                        alert(`Error deleting event: ${data.message}`);
+                    }
+                } catch (error) {
+                    console.error('Error deleting event:', error);
+                    alert('Error deleting event');
+                }
+            }
+        }
+
+        async function shareEvent(eventId) {
+            console.log('Sharing event with ID:', eventId);
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/events/${eventId}/share`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Event shared successfully');
+                } else {
+                    alert(`Error sharing event: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Error sharing event:', error);
+                alert('Error sharing event');
+            }
+        }
+
+        // Add event listener for the search button
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value;
+            fetchEvents(query);
+        });
+    </script>
+</body>
+</html>
